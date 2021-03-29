@@ -1,0 +1,10 @@
+SAMPLES : ['sample']
+
+GENOME: "../GATK_Resources/Homo_sapiens_assembly38.fasta"
+DBSNP: "../GATK_Resources/Homo_sapiens_assembly38.dbsnp138.vcf"
+INDELS: "../GATK_Resources/Homo_sapiens_assembly38.known_indels.vcf"
+GOLD_STANDARD: "../GATK_Resources/Mills_and_1000G_gold_standard.indels.hg38.vcf"
+EXCL_HG38: "human.hg38.excl.tsv"
+
+RG: "A00489_467.HT3G5DMXX.s_2"
+ALL_VCF: "all_samples.vcf"
