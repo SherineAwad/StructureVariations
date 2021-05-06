@@ -31,6 +31,9 @@ and you can see the command printed on a dry run using:
 
     snakemake -j1 -n -p 
 
+and you can try the follwoing to keep going if any issues happen, like no variants is found by one tool: 
+    
+    snakemek -j1 --keep-going 
 
 Dependencies
 -------------
