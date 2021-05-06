@@ -1,5 +1,7 @@
 configfile: "config.yaml"
 
+ruleorder: trim > tosam > AddRG > dedup > recalibrate > get_excl > delly_bcf > delly_vcf > tiddit_vcf
+
 rule all: 
     input:
        expand("{sample}.tiddit.vcf", sample = config['SAMPLES'] ),       
