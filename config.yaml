@@ -1,4 +1,4 @@
-SAMPLES : ['sample1', 'sample2']
+SAMPLES : ['sample1','sample2']
 
 GENOME: "../GATK_Resources/Homo_sapiens_assembly38.fasta"
 DBSNP: "../GATK_Resources/Homo_sapiens_assembly38.dbsnp138.vcf"

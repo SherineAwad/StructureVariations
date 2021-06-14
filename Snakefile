@@ -1,6 +1,6 @@
 configfile: "config.yaml"
 
-ruleorder: trim > tosam > AddRG > dedup > recalibrate > get_excl > delly_bcf > delly_vcf > tiddit_vcf
+ruleorder: trim > tosam > AddRG > dedup > get_excl > delly_bcf > delly_vcf > tiddit_vcf
 
 rule all: 
     input:
@@ -49,26 +49,6 @@ rule dedup:
        '{sample}.output.metrics'
      shell:
         "picard MarkDuplicates I={input} O={output[0]} CREATE_INDEX=true M={output[1]}"
-
-
-rule recalibrate: 
-    input:  
-         sample = '{sample}.dedupped.bam', 
-         genome = config['GENOME']
-    output:
-         '{sample}.recal_data.table',
-         '{sample}.recalibrated.bam'
-    params: 
-        mem = "-Xmx800g",
-        knownsites1 = config['DBSNP'],
-        knownsites2 = config['INDELS'],
-        knownsites3 = config['GOLD_STANDARD']
-   
-    shell:
-       """
-       gatk --java-options {params.mem} BaseRecalibrator -I {input.sample} -R {input.genome} --known-sites {params.knownsites1} --known-sites {params.knownsites2} --known-sites {params.knownsites3} -O {output[0]}
-       gatk --java-options {params.mem} ApplyBQSR  -I {input.sample} -R {input.genome} --bqsr-recal-file {output[0]} -O {output[1]} 
-       """ 
 
 
 rule get_excl: 
