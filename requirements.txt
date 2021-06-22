@@ -1,5 +1,0 @@
-trim-galore
-bowtie2
-picard
-delly
-tiddit
