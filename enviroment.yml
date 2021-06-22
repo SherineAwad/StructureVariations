@@ -1,13 +1,13 @@
 # conda environment configuration for snakemake
 name: SV 
 channels:
-    - conda-forge
     - bioconda
+    - conda-forge
     - defaults
 dependencies:
     - trim-galore=0.6.6
     - bowtie2=2.3.5.1
-    - picared=2.24.2
+    - picard=2.24.2
     - delly=0.7.3
     - tiddit=2.12.1
 
