@@ -13,13 +13,25 @@ To run the pipeline, you need to change appropriately the config file, and use:
 
     snakemake -jn where n is the number of cores. 
 
+And for less frooodiness, to pull automatically the same versions of dependencies use: 
+
+    snakemake -jn --use-conda 
+
+This will pull the same versions of tools we used. Conda has to be installed in your system. 
+
+
 for example for using 10 cores, run:
     
     snakemake -j10
 
+or 
+
+    snakemake -j10 --use-conda 
+
+
 or you can run a specific rule using the rule output, for example we can call the delly_vcf rule on a specific sample: 
  
-    snakemake -j1 sample.delly.vcf 
+    snakemake -j1 sample.delly.vcf --use-conda  
 
 where sample.r_1.fq.gz and sample.s_2.r_2.fq.gz should exist in the directory. 
 
@@ -33,30 +45,8 @@ and you can see the command printed on a dry run using:
 
 and you can try the follwoing to keep going if any issues happen, like no variants is found by one tool: 
     
-    snakemek -j1 --keep-going 
+    snakemake -j1 --keep-going 
 
-Dependencies
--------------
-
-You can install the required tools or use our docker image (to be updated): 
-
-    conda install -c bioconda snakemake
-   
-    conda install -c bioconda trim-galore
-    
-    conda install -c bioconda cutadapt
-
-    conda install -c bioconda bowtie2
-
-    conda install -c bioconda gatk4
-
-    conda install -c bioconda picard
-
-    conda install -c bioconda delly
-
-    conda install -c bioconda bcftools
-
-    conda install -c bioconda tiddit
 
 
 TODO 

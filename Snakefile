@@ -15,6 +15,7 @@ rule trim:
     output: 
       val1 = "galore/{sample}.r_1_val_1.fq.gz",
       val2 = "galore/{sample}.r_2_val_2.fq.gz"
+    conda: 'env/env-trim.yaml'
     shell: 
         """
          trim_galore --gzip --retain_unpaired --trim1 --fastqc --fastqc_args "--outdir fastqc" -o galore --paired {input.r1} {input.r2}
@@ -27,6 +28,7 @@ rule tosam:
         r2 = "galore/{sample}.r_2_val_2.fq.gz"
     output:
         '{sample}.sam'
+    conda: 'env/env-align.yaml'
     shell:
         "bowtie2 -x {input.genome} -1 {input.r1} -2 {input.r2} -S {output}"
 
@@ -37,6 +39,7 @@ rule AddRG:
        '{sample}.RG.sam' 
     params: 
         RG = config['RG']
+    conda: 'env/env-picard.yaml'
     shell:
         "picard AddOrReplaceReadGroups I={input} O={output} SO=coordinate RGID=@{params} RGSM={wildcards.sample} RGPL=Illumina RGLB={wildcards.sample} RGPU={params}_{wildcards.sample} VALIDATION_STRINGENCY=SILENT" 
 
@@ -47,6 +50,7 @@ rule dedup:
      output:
        '{sample}.dedupped.bam',
        '{sample}.output.metrics'
+     conda: 'env/env-picard.yaml'
      shell:
         "picard MarkDuplicates I={input} O={output[0]} CREATE_INDEX=true M={output[1]}"
 
@@ -68,6 +72,7 @@ rule delly_bcf:
         EXCL = config['EXCL_HG38']
      output:
         "{SAMPLE}.delly.bcf"
+     conda: 'env/env-delly.yaml'
      shell:
        """
        delly call -x {input.EXCL}  -o {output} -g {input.genome} {input[0]}
@@ -79,6 +84,7 @@ rule delly_vcf:
         "{SAMPLE}.delly.bcf"
      output:
         "{SAMPLE}.delly.vcf"
+     conda: 'env/env-delly.yaml'
      shell:
          "bcftools view {input} > {output}"
 
@@ -90,5 +96,6 @@ rule tiddit_vcf:
         "{SAMPLE}.tiddit"
     output: 
          "{SAMPLE}.tiddit.vcf"
+    conda: 'env/env-tiddit.yaml'
     shell: 
       "tiddit --sv --bam {input} -o {params}" 
