@@ -3,6 +3,7 @@ name: SV
 channels:
     - bioconda
     - conda-forge
+    - dranew
     - defaults
 dependencies:
     - trim-galore=0.6.6
