@@ -1,4 +1,4 @@
-name: Ribofilio_Github_Actions_For_Pytest
+name: Tests for snakemake SV 
 on:
   push:
     branches:
