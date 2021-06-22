@@ -9,11 +9,15 @@ Then GATK4 pipeline follows: add read groups, mark duplicates. We are testing to
 
 The pipleine also uses the dedupped reads to call structure variations using delly. 
 
+#### Run the pipeline 
+
 To run the pipeline, you need to change appropriately the config file, and use:
 
     snakemake -jn where n is the number of cores. 
 
-And for less frooodiness, to pull automatically the same versions of dependencies use: 
+#### Use Conda 
+
+For less frooodiness, to pull automatically the same versions of dependencies use: 
 
     snakemake -jn --use-conda 
 
@@ -24,16 +28,20 @@ for example for using 10 cores, run:
     
     snakemake -j10
 
-or 
-
+or
+ 
     snakemake -j10 --use-conda 
 
+#### Run rule by rule 
 
-or you can run a specific rule using the rule output, for example we can call the delly_vcf rule on a specific sample: 
+You can run a specific rule using the rule output, for example we can call the delly_vcf rule on a specific sample: 
  
     snakemake -j1 sample.delly.vcf --use-conda  
 
 where sample.r_1.fq.gz and sample.s_2.r_2.fq.gz should exist in the directory. 
+
+
+#### Dry run 
 
 for a dry run use: 
 
@@ -43,14 +51,15 @@ and you can see the command printed on a dry run using:
 
     snakemake -j1 -n -p 
 
-and you can try the follwoing to keep going if any issues happen, like no variants is found by one tool: 
+#### Keep going option 
+
+
+You can try the following to keep going if any issues happen, like no variants is found by one tool: 
     
     snakemake -j1 --keep-going 
 
 
-
-TODO 
------ 
+## TODO 
 
 1. Add more parameters in the config file to replace many default parameters 
 
@@ -62,8 +71,7 @@ TODO
 
 5. Add more comments on the snakefile
 
-References
-------------
+## References
 
 1. Brouard, Jean-Simon, Flavio Schenkel, Andrew Marete, and Nathalie Bissonnette. "The GATK joint genotyping workflow is appropriate for calling variants in RNA-seq experiments." Journal of animal science and biotechnology 10, no. 1 (2019): 1-6.
 
