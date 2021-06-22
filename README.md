@@ -15,6 +15,11 @@ To run the pipeline, you need to change appropriately the config file, and use:
 
     snakemake -jn where n is the number of cores. 
 
+For example for using 10 cores, run:
+
+    snakemake -j10
+
+
 #### Use Conda 
 
 For less frooodiness, to pull automatically the same versions of dependencies use: 
@@ -23,12 +28,7 @@ For less frooodiness, to pull automatically the same versions of dependencies us
 
 This will pull the same versions of tools we used. Conda has to be installed in your system. 
 
-
-for example for using 10 cores, run:
-    
-    snakemake -j10
-
-or
+For example, for 10 cores: 
  
     snakemake -j10 --use-conda 
 
