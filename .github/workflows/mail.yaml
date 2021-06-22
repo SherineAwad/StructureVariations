@@ -12,10 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+            python-version: 3.7  
+     
       - name: Setup conda
         uses: s-weigand/setup-conda@v1
         with:
             activate-conda: true
       - run: conda env update -n base -f environment.yml
+     
       - name: Test with pytest
         run: pytest .tests/unit/ 
