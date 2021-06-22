@@ -12,9 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+      - name: Setup conda
+        uses: s-weigand/setup-conda@v1
+        with:
+            activate-conda: true
+      - run: conda env update -n base -f environment.yml
       - name: Test with pytest
         run: pytest .tests/unit/ 
