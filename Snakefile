@@ -1,12 +1,12 @@
 configfile: "config.yaml"
 
-ruleorder: trim > tosam > AddRG > dedup > get_excl > delly_bcf > delly_vcf > tiddit_vcf
+ruleorder: trim > tosam > AddRG > dedup > get_excl > delly_bcf > delly_vcf > tiddit_vcf > get_draggable > gene_fuse
 
 rule all: 
     input:
        expand("{sample}.tiddit.vcf", sample = config['SAMPLES'] ),       
-       expand("{sample}.delly.vcf", sample = config['SAMPLES'] )
-
+       expand("{sample}.delly.vcf", sample = config['SAMPLES'] ),
+       expand("{sample}_result", sample = config['SAMPLES'])
 
 rule trim: 
     input: 
@@ -98,4 +98,28 @@ rule tiddit_vcf:
          "{SAMPLE}.tiddit.vcf"
     conda: 'env/env-tiddit.yaml'
     shell: 
-      "tiddit --sv --bam {input} -o {params}" 
+      "tiddit --sv --bam {input} -o {params}"
+
+
+rule get_draggable:
+     output: 
+          config['druggable']
+     shell: 
+        """
+        wget https://raw.githubusercontent.com/OpenGene/GeneFuse/master/genes/{output} 
+        """ 
+rule gene_fuse: 
+    input:
+       val1 = "galore/{sample}.r_1_val_1.fq.gz",
+       val2 = "galore/{sample}.r_2_val_2.fq.gz",
+       genome = config['GENOME'],
+       druggable = config['druggable'] 
+    output: 
+        html = "{sample}_report.html",
+        result = "{sample}_result"
+    conda: 'env/env-fuse.yaml' 
+    shell: 
+         """
+           genefuse -r {input.genome}  -f {input.druggable} -1 {input.val1} -2 {input.val2} -h {output.html} > {output.result}
+         """
+ 

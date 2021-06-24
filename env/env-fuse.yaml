@@ -1,0 +1,6 @@
+# conda environment configuration for snakemake --use-conda
+channels:
+    - bioconda
+    - defaults
+dependencies:
+    - gene_fuse=0.6.1

@@ -1,8 +1,10 @@
-Snakemake Workflow for Structure Variations Calling using Delly and Tiddit 
+Snakemake Workflow for Structure Variations Calling and Gene Fusion 
 =======================================================================================================================
 
 
 This is a Snakemake workflow for structure variations calling using delly and tiddit calling for structure variations SV (More structure variations tools will be included). 
+
+We also use gene_fuse for callign gene fusions. 
 
 The pipeline uses trimgalore and cutadapt to trim adapters. Align the reads using Bowtie2. 
 Then GATK4 pipeline follows: add read groups, mark duplicates. We are testing to see whether base recalibration in SV is better. 
@@ -67,7 +69,7 @@ You can try the following to keep going if any issues happen, like no variants i
 
 3. Add annotation rules for structure variations 
 
-4. Add gene fusion call 
+4. Add  more gene fusion tools 
 
 5. Add more comments on the snakefile
 

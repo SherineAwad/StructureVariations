@@ -1,4 +1,4 @@
-SAMPLES : ['sample1','sample2']
+SAMPLES : ['sample1', 'sample2']
 
 GENOME: "../GATK_Resources/Homo_sapiens_assembly38.fasta"
 DBSNP: "../GATK_Resources/Homo_sapiens_assembly38.dbsnp138.vcf"
@@ -9,3 +9,4 @@ EXCL_HG38: "human.hg38.excl.tsv"
 RG: "A00489_467.HT3G5DMXX.s_2"
 ALL_VCF: "all_samples.vcf"
 
+druggable: "druggable.hg38.csv" 
