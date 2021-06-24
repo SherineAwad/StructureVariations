@@ -4,7 +4,7 @@ Snakemake Workflow for Structure Variations Calling and Gene Fusion
 
 This is a Snakemake workflow for structure variations calling using delly and tiddit calling for structure variations SV (More structure variations tools will be included). 
 
-We also use gene_fuse for calling gene fusions. 
+We also use genefuse for calling gene fusions. 
 
 The pipeline uses trimgalore and cutadapt to trim adapters. Align the reads using Bowtie2. 
 Then GATK4 pipeline follows: add read groups, mark duplicates. We are testing to see whether base recalibration in SV is better. 
@@ -86,4 +86,7 @@ You can try the following to keep going if any issues happen, like no variants i
 5. Li, H. (2011). A statistical framework for SNP calling, mutation discovery, association mapping and population genetical parameter estimation from sequencing data. Bioinformatics, 27(21), 2987-2993.
 
 6. Eisfeldt, J., Vezzi, F., Olason, P., Nilsson, D., & Lindstrand, A. (2017). TIDDIT, an efficient and comprehensive structural variant caller for massive parallel sequencing data. F1000Research, 6.
+
+7. Chen, S., Liu, M., Huang, T., Liao, W., Xu, M., & Gu, J. (2018). GeneFuse: detection and visualization of target gene fusions from DNA sequencing data. International journal of biological sciences, 14(8), 843–848. https://doi.org/10.7150/ijbs.24626
+
 
