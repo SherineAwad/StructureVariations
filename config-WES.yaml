@@ -1,0 +1,24 @@
+SAMPLES: ['SLX-18968.UDP0231.HT3G5DMXX.s_2',
+           'SLX-18968.UDP0239.HT3G5DMXX.s_2',
+           'SLX-18968.UDP0247.HT3G5DMXX.s_2',
+           'SLX-18968.UDP0255.HT3G5DMXX.s_2',
+           'SLX-18968.UDP0263.HT3G5DMXX.s_2',
+           'SLX-18968.UDP0271.HT3G5DMXX.s_2',
+           'SLX-18968.UDP0277.HT3G5DMXX.s_2',
+           'SLX-18968.UDP0279.HT3G5DMXX.s_2',
+           'SLX-18968.UDP0285.HT3G5DMXX.s_2',
+           'SLX-18968.UDP0287.HT3G5DMXX.s_2']
+
+TOOL: {'delly', 'tiddit'}
+BUILD: "GRCh38"
+
+GENOME: "../annotations/gatkresources/Homo_sapiens_assembly38.fasta"
+DBSNP: "../annotations/gatkresources/Homo_sapiens_assembly38.dbsnp138.vcf"
+INDELS: "../annotations/gatkresources/Homo_sapiens_assembly38.known_indels.vcf"
+GOLD_STANDARD: "../annotations/gatkresources/Mills_and_1000G_gold_standard.indels.hg38.vcf"
+EXCL_HG38: "human.hg38.excl.tsv"
+
+RG: "A00489_467.HT3G5DMXX.2"
+ALL_VCF: "all_samples.vcf"
+druggable: "druggable.hg38.csv"
+AnnotationDB: "gnomad.exomes.r2.1.1.sites.liftover_grch38.vcf.bgz" 

@@ -1,12 +1,8 @@
-configfile: "config.yaml"
-
-ruleorder: trim > tosam > AddRG > dedup > get_excl > delly_bcf > delly_vcf > tiddit_vcf > get_draggable > gene_fuse
 
 rule all: 
     input:
-       expand("{sample}.tiddit.vcf", sample = config['SAMPLES'] ),       
-       expand("{sample}.delly.vcf", sample = config['SAMPLES'] ),
-       expand("{sample}_result", sample = config['SAMPLES'])
+       expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),       
+       expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
 
 rule trim: 
     input: 
@@ -17,9 +13,9 @@ rule trim:
       val2 = "galore/{sample}.r_2_val_2.fq.gz"
     conda: 'env/env-trim.yaml'
     shell: 
-        """
-         trim_galore --gzip --retain_unpaired --trim1 --fastqc --fastqc_args "--outdir fastqc" -o galore --paired {input.r1} {input.r2}
-        """ 
+         """
+          trim_galore --gzip --retain_unpaired --trim1 --fastqc --fastqc_args "--outdir fastqc" -o galore --paired {input.r1} {input.r2}
+         """ 
 
 rule tosam:
     input:
@@ -61,10 +57,8 @@ rule get_excl:
       output: 
          config['EXCL_HG38']
       shell: 
-         """
-           wget https://raw.githubusercontent.com/dellytools/delly/master/excludeTemplates/{params}
-         """
-      
+         "wget https://raw.githubusercontent.com/dellytools/delly/master/excludeTemplates/{params}"
+ 
 rule delly_bcf:
      input:
         "{SAMPLE}.dedupped.bam",
@@ -74,10 +68,7 @@ rule delly_bcf:
         "{SAMPLE}.delly.bcf"
      conda: 'env/env-delly.yaml'
      shell:
-       """
-       delly call -x {input.EXCL}  -o {output} -g {input.genome} {input[0]}
-       """
-
+       "delly call -x {input.EXCL}  -o {output} -g {input.genome} {input[0]}"
 
 rule delly_vcf:
      input:
@@ -105,9 +96,8 @@ rule get_draggable:
      output: 
           config['druggable']
      shell: 
-        """
-        wget https://raw.githubusercontent.com/OpenGene/GeneFuse/master/genes/{output} 
-        """ 
+       "wget https://raw.githubusercontent.com/OpenGene/GeneFuse/master/genes/{output}"
+
 rule gene_fuse: 
     input:
        val1 = "galore/{sample}.r_1_val_1.fq.gz",
@@ -119,7 +109,15 @@ rule gene_fuse:
         result = "{sample}_result"
     conda: 'env/env-fuse.yaml' 
     shell: 
-         """
-           genefuse -r {input.genome}  -f {input.druggable} -1 {input.val1} -2 {input.val2} -h {output.html} > {output.result}
-         """
- 
+        "genefuse -r {input.genome}  -f {input.druggable} -1 {input.val1} -2 {input.val2} -h {output.html} > {output.result}"
+
+rule annotate: 
+    input: 
+          "{sample}.{sv}.vcf" 
+    output: 
+          "{sample}.{sv}.annotated.vcf.tsv"
+    params:
+        build = config['BUILD']
+    shell:
+        "$ANNOTSV/bin/AnnotSV -SVinputFile ./{input} -outputFile ./{output} -genomeBuild {params.build}"         
+
