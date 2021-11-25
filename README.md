@@ -94,4 +94,9 @@ You can try the following to keep going if any issues happen, like no variants i
 
 7. Chen, S., Liu, M., Huang, T., Liao, W., Xu, M., & Gu, J. (2018). GeneFuse: detection and visualization of target gene fusions from DNA sequencing data. International journal of biological sciences, 14(8), 843–848. https://doi.org/10.7150/ijbs.24626
 
+8. Geoffroy, V., Herenger, Y., Kress, A., Stoetzel, C., Piton, A., Dollfus, H., & Muller, J. (2018). AnnotSV: an integrated tool for structural variations annotation. Bioinformatics, 34(20), 3572-3574.
+
+9. Jeffares, D. C., Jolly, C., Hoti, M., Speed, D., Shaw, L., Rallis, C., ... & Sedlazeck, F. J. (2017). Transient structural variations have strong effects on quantitative traits and reproductive isolation in fission yeast. Nature communications, 8(1), 1-11.
+
+10. Layer, R. M., Chiang, C., Quinlan, A. R., & Hall, I. M. (2014). LUMPY: a probabilistic framework for structural variant discovery. Genome biology, 15(6), 1-19.
 
