@@ -1,8 +1,9 @@
-
+ruleorder: trim > tosam > AddRG > dedup >  delly_vcf > tiddit_vcf > lumpy_vcf > SURVIVOR_LIST
 rule all: 
     input:
        expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),       
        expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
+       expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL'])
 
 rule trim: 
     input: 
@@ -92,24 +93,34 @@ rule tiddit_vcf:
       "tiddit --sv --bam {input} -o {params}"
 
 
-rule get_draggable:
-     output: 
-          config['druggable']
-     shell: 
-       "wget https://raw.githubusercontent.com/OpenGene/GeneFuse/master/genes/{output}"
-
+rule lumpy_vcf: 
+    input: 
+       "{SAMPLE}.dedupped.bam"
+    params: 
+       genome = config['GENOME']
+    output: 
+       "{SAMPLE}.lumpy.vcf" 
+    conda: "env/env-lumpy.yaml"
+    shell: 
+        """
+           lumpyexpress -B {input} -R {params.genome} -o {output}
+        """ 
 rule gene_fuse: 
     input:
        val1 = "galore/{sample}.r_1_val_1.fq.gz",
        val2 = "galore/{sample}.r_2_val_2.fq.gz",
-       genome = config['GENOME'],
+       genome = config['GENOME']
+    params:   
        druggable = config['druggable'] 
     output: 
         html = "{sample}_report.html",
         result = "{sample}_result"
     conda: 'env/env-fuse.yaml' 
-    shell: 
-        "genefuse -r {input.genome}  -f {input.druggable} -1 {input.val1} -2 {input.val2} -h {output.html} > {output.result}"
+    shell:
+        """
+        wget https://raw.githubusercontent.com/OpenGene/GeneFuse/master/genes/{params.druggable}
+        genefuse -r {input.genome}  -f {params.druggable} -1 {input.val1} -2 {input.val2} -h {output.html} > {output.result}
+        """
 
 rule annotate: 
     input: 
@@ -121,3 +132,13 @@ rule annotate:
     shell:
         "$ANNOTSV/bin/AnnotSV -SVinputFile ./{input} -outputFile ./{output} -genomeBuild {params.build}"         
 
+rule SURVIVOR_LIST:
+   input:  
+      "{COHORT}.{SV}.list",
+   output: 
+      "{COHORT}.{SV}.vcf"
+   shell: 
+      """
+        SURVIVOR merge {input[0]}  1000 10 1 1 0 30 {output[0]}
+      """ 
+ 

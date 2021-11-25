@@ -9,9 +9,9 @@ SAMPLES: ['SLX-18968.UDP0231.HT3G5DMXX.s_2',
            'SLX-18968.UDP0285.HT3G5DMXX.s_2',
            'SLX-18968.UDP0287.HT3G5DMXX.s_2']
 
-TOOL: {'delly', 'tiddit'}
+TOOL: {'delly', 'tiddit','lumpy'}
 BUILD: "GRCh38"
-
+COHORT: "WES" 
 GENOME: "../annotations/gatkresources/Homo_sapiens_assembly38.fasta"
 DBSNP: "../annotations/gatkresources/Homo_sapiens_assembly38.dbsnp138.vcf"
 INDELS: "../annotations/gatkresources/Homo_sapiens_assembly38.known_indels.vcf"
