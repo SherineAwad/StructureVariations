@@ -1,7 +1,6 @@
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.0.2-brightgreen.svg)](https://snakemake.github.io)
-[![Documentation Status](https://readthedocs.org/projects/ribofilio/badge/)](http://dammit.readthedocs.io/en/latest)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 Snakemake Workflow for Structure Variations Calling and Gene Fusion 
 =======================================================================================================================
