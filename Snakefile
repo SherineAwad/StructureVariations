@@ -1,34 +1,59 @@
-ruleorder: trim > tosam > AddRG > dedup >  delly_vcf > tiddit_vcf > lumpy_vcf > SURVIVOR_LIST
+ruleorder: trim > tosam > AddRG > dedup >  delly_vcf > tiddit_vcf > lumpy_vcf > plot > SURVIVOR_LIST
 rule all: 
     input:
        expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),       
        expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
+       expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL']),
        expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL'])
 
-rule trim: 
-    input: 
-       r1 = "{sample}.r_1.fq.gz",
-       r2 = "{sample}.r_2.fq.gz"
-    output: 
-      val1 = "galore/{sample}.r_1_val_1.fq.gz",
-      val2 = "galore/{sample}.r_2_val_2.fq.gz"
-    conda: 'env/env-trim.yaml'
-    shell: 
-         """
-          trim_galore --gzip --retain_unpaired --trim1 --fastqc --fastqc_args "--outdir fastqc" -o galore --paired {input.r1} {input.r2}
-         """ 
+if config['PAIRED']:
+    rule trim:
+       input:
+           r1 = "{sample}.r_1.fq.gz",
+           r2 = "{sample}.r_2.fq.gz"
+       output:
+           "galore/{sample}.r_1_val_1.fq.gz",
+           "galore/{sample}.r_2_val_2.fq.gz"
+       conda: 'env/env-trim.yaml'
+       shell:
+           """
+           mkdir -p galore
+           mkdir -p fastqc
+           trim_galore --gzip --retain_unpaired --trim1 --fastqc --fastqc_args "--outdir fastqc" -o galore --paired {input.r1} {input.r2}
+           """
+    rule tosam:
+        input:
+            genome = config['GENOME'],
+            r1 = "galore/{sample}.r_1_val_1.fq.gz",
+            r2 = "galore/{sample}.r_2_val_2.fq.gz"
+        output:
+            '{sample}.sam'
+        conda: 'env/env-align.yaml'
+        shell:
+            "bowtie2 -x {input.genome} -1 {input.r1} -2 {input.r2} -S {output}"
+else:
+     rule trim:
+       input:
+           "{sample}.fq.gz",
 
-rule tosam:
-    input:
-        genome = config['GENOME'],
-        r1 = "galore/{sample}.r_1_val_1.fq.gz",
-        r2 = "galore/{sample}.r_2_val_2.fq.gz"
-    output:
-        '{sample}.sam'
-    conda: 'env/env-align.yaml'
-    shell:
-        "bowtie2 -x {input.genome} -1 {input.r1} -2 {input.r2} -S {output}"
-
+       output:
+           "galore/{sample}_trimmed.fq.gz",
+       conda: 'env/env-trim.yaml'
+       shell:
+           """
+           mkdir -p galore
+           mkdir -p fastqc
+           trim_galore --gzip --retain_unpaired --trim1 --fastqc --fastqc_args "--outdir fastqc" -o galore {input}
+           """
+     rule tosam:
+        input:
+           "galore/{sample}_trimmed.fq.gz"
+        output:
+            '{sample}.sam'
+        conda: 'env/env-align.yaml'
+        shell:
+            "bowtie2 -x {input.genome} -1 {input.r1} -2 {input.r2} -S {output}"
+ 
 rule AddRG: 
     input: 
        '{sample}.sam'
@@ -141,4 +166,19 @@ rule SURVIVOR_LIST:
       """
         SURVIVOR merge {input[0]}  1000 10 1 1 0 30 {output[0]}
       """ 
- 
+
+
+rule plot: 
+    input: 
+       "{sample}.{sv}.vcf", 
+       "{sample}.bam" 
+    params: 
+       "{sample}.{sv}_output"
+    output: 
+        "{sample}.{sv}_output/{sample}.{sv}.html"
+    shell: 
+       """
+       samplot vcf --vcf {input[0]} -O png -b {input[1]} 
+       mv samplot-out {params}  
+       mv {params}/index.html {output}
+       """ 

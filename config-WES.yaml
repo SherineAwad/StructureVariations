@@ -12,6 +12,7 @@ SAMPLES: ['SLX-18968.UDP0231.HT3G5DMXX.s_2',
 TOOL: {'delly', 'tiddit','lumpy'}
 BUILD: "GRCh38"
 COHORT: "WES" 
+PAIRED: TRUE
 GENOME: "../annotations/gatkresources/Homo_sapiens_assembly38.fasta"
 DBSNP: "../annotations/gatkresources/Homo_sapiens_assembly38.dbsnp138.vcf"
 INDELS: "../annotations/gatkresources/Homo_sapiens_assembly38.known_indels.vcf"

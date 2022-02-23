@@ -15,6 +15,25 @@ Then we use from GATK4 pipeline add read groups,and mark duplicates.
 
 We use ANNOTSV for annotating the structure variants and SURVIVOR for filtering and merging as needed. 
 
+The pipeline shows some plots to help visualize the SV as follows: 
+
+#####Deletion Example 
+
+![DEL_chr1_156556862_156559163.png](samplot-out/DEL_chr1_156556862_156559163.png)
+
+#####Duplication Example 
+
+![DUP_chr7_56372767_56375125.png](samplot-out/DUP_chr7_56372767_56375125.png)
+
+#####Inversion Example 
+
+INV_chr16_34590021_46397471.png
+
+![INV_chr16_34590021_46397471.png](samplot-out/INV_chr16_34590021_46397471.png)
+
+
+and you can see an html page sumamry of the SV in your sample as [here](/samplot-out/index.html)
+
 #### Run the pipeline 
 
 To run the pipeline, you need to change appropriately the config file, and use:
@@ -71,11 +90,8 @@ You can try the following to keep going if any issues happen, like no variants i
 
 2. Add more tools to call structure variations that suite WES and WGS 
 
-3. Add annotation rules for structure variations 
-
 4. Add  more gene fusion tools 
 
-5. Add more comments on the snakefile
 
 ## References
 
