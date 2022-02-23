@@ -17,22 +17,22 @@ We use ANNOTSV for annotating the structure variants and SURVIVOR for filtering 
 
 The pipeline shows some plots to help visualize the SV as follows: 
 
-#####Deletion Example 
+#### Deletion Example 
 
 ![DEL_chr1_156556862_156559163.png](samplot-out/DEL_chr1_156556862_156559163.png)
 
-#####Duplication Example 
+##### Duplication Example 
 
 ![DUP_chr7_56372767_56375125.png](samplot-out/DUP_chr7_56372767_56375125.png)
 
-#####Inversion Example 
+##### Inversion Example 
 
 INV_chr16_34590021_46397471.png
 
 ![INV_chr16_34590021_46397471.png](samplot-out/INV_chr16_34590021_46397471.png)
 
 
-and you can see an html page sumamry of the SV in your sample as [here](/samplot-out/index.html)
+and you can see an html page sumamry of the SV in your sample as [here](/samplot-out/index)
 
 #### Run the pipeline 
 
