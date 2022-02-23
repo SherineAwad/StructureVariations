@@ -171,7 +171,7 @@ rule SURVIVOR_LIST:
 rule plot: 
     input: 
        "{sample}.{sv}.vcf", 
-       "{sample}.bam" 
+       "{sample}.dedupped.bam" 
     params: 
        "{sample}.{sv}_output"
     output: 
