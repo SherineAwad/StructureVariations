@@ -32,7 +32,7 @@ INV_chr16_34590021_46397471.png
 ![INV_chr16_34590021_46397471.png](samplot-out/INV_chr16_34590021_46397471.png)
 
 
-and you can see an html page sumamry of the SV in your sample as [here](/samplot-out/index)
+and you can see an html page sumamry of the SV in your sample in `index.html`
 
 #### Run the pipeline 
 
