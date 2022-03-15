@@ -1,10 +1,14 @@
-ruleorder: trim > tosam > AddRG > dedup >  delly_vcf > tiddit_vcf > lumpy_vcf > plot > SURVIVOR_LIST
+#ruleorder: trim > tosam > AddRG > dedup >  delly_vcf > tiddit_vcf > lumpy_vcf > plot > SURVIVOR_LIST
+
 rule all: 
     input:
-       expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),       
-       expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
-       expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL']),
-       expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL'])
+       expand("{sample}.sam", sample = config['SAMPLES']),
+       expand("{sample}.discordants.sorted.bam", sample = config['SAMPLES']),
+       expand("{sample}.splitters.sorted.bam", sample = config['SAMPLES']),
+       expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),
+       #expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
+       #expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL']),
+       #expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL'])
 
 if config['PAIRED']:
     rule trim:
@@ -30,12 +34,11 @@ if config['PAIRED']:
             '{sample}.sam'
         conda: 'env/env-align.yaml'
         shell:
-            "bowtie2 -x {input.genome} -1 {input.r1} -2 {input.r2} -S {output}"
+            "bwa mem {input.genome} {input.r1} {input.r2} > {output}"
 else:
      rule trim:
        input:
-           "{sample}.fq.gz",
-
+           "{sample}.trimmed.fq.gz",
        output:
            "galore/{sample}_trimmed.fq.gz",
        conda: 'env/env-trim.yaml'
@@ -52,8 +55,17 @@ else:
             '{sample}.sam'
         conda: 'env/env-align.yaml'
         shell:
-            "bowtie2 -x {input.genome} -1 {input.r1} -2 {input.r2} -S {output}"
- 
+           "bwa mem {input.genome} {input} > {output}" 
+
+rule sam_bam: 
+    input: 
+        "{sample}.sam"
+    output: 
+        "{sample}.bam"
+    shell: 
+         """ 
+         samtools view -S -b {input} > {output}
+         """ 
 rule AddRG: 
     input: 
        '{sample}.sam'
@@ -120,15 +132,15 @@ rule tiddit_vcf:
 
 rule lumpy_vcf: 
     input: 
-       "{SAMPLE}.dedupped.bam"
-    params: 
-       genome = config['GENOME']
+      "{sample}.bam",
+      "{sample}.discordants.sorted.bam",
+      "{sample}.splitters.sorted.bam" 
     output: 
-       "{SAMPLE}.lumpy.vcf" 
+       "{sample}.lumpy.vcf" 
     conda: "env/env-lumpy.yaml"
     shell: 
         """
-           lumpyexpress -B {input} -R {params.genome} -o {output}
+        lumpyexpress  -B {input[0]} -S {input[2]} -D {input[1]} -o {output} 
         """ 
 rule gene_fuse: 
     input:
@@ -146,6 +158,31 @@ rule gene_fuse:
         wget https://raw.githubusercontent.com/OpenGene/GeneFuse/master/genes/{params.druggable}
         genefuse -r {input.genome}  -f {params.druggable} -1 {input.val1} -2 {input.val2} -h {output.html} > {output.result}
         """
+
+rule discordants :
+      input:
+           "{sample}.bam"
+      output: 
+          "{sample}.discordants.unsorted.bam", 
+          "{sample}.discordants.sorted.bam"
+      shell: 
+         """
+          samtools view -b -F 1294 {input} > {output[0]} 
+          samtools sort {output[0]} -o {output[1]} 
+         """ 
+
+rule splitters: 
+      input:
+           "{sample}.bam"
+      output:
+           "{sample}.splitters.unsorted.bam",
+           "{sample}.splitters.sorted.bam"
+      shell: 
+          """ 
+          samtools view -h  {input} | samblaster --ignoreUnmated -e --maxReadLength 100000 -s temp.split.sam] | samtools view -Sb - > {output[0]}
+          samtools sort {output[0]} -o {output[1]} 
+          """ 
+
 
 rule annotate: 
     input: 
