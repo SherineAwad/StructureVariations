@@ -10,8 +10,7 @@ This is a Snakemake workflow for structure variations calling using delly, tiddi
 
 We also use genefuse for calling gene fusions. 
 
-The pipeline uses trimgalore and cutadapt to trim adapters. Align the reads using Bowtie2. 
-Then we use from GATK4 pipeline add read groups,and mark duplicates.  
+The pipeline uses trimgalore and cutadapt to trim adapters. Align the reads using bwa mem. Based on the SV tool used, we either sort and index or add readgroups and mark duplicates.  
 
 We use ANNOTSV for annotating the structure variants and SURVIVOR for filtering and merging as needed. 
 
@@ -32,8 +31,11 @@ INV_chr16_34590021_46397471.png
 ![INV_chr16_34590021_46397471.png](samplot-out/INV_chr16_34590021_46397471.png)
 
 
-and you can see an html page sumamry of the SV in your sample in `index.html`
+and you can see an html page sumamry of the SV in your sample in `index.html` for example, for delly output:: 
 
+
+   [index.html](samplot-out/index.html)
+ 
 #### Run the pipeline 
 
 To run the pipeline, you need to change appropriately the config file, and use:
