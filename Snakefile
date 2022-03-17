@@ -1,10 +1,8 @@
-#ruleorder: trim > tosam > AddRG > dedup >  delly_vcf > tiddit_vcf > lumpy_vcf > plot > SURVIVOR_LIST
+#ruleorder: trim > tosam > AddRG > dedup >  delly_vcf > tiddit_vcf > sniffles_vcf > plot > SURVIVOR_LIST
 
 rule all: 
     input:
        expand("{sample}.sam", sample = config['SAMPLES']),
-       expand("{sample}.discordants.sorted.bam", sample = config['SAMPLES']),
-       expand("{sample}.splitters.sorted.bam", sample = config['SAMPLES']),
        expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),
        expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
        expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL']),
@@ -150,18 +148,6 @@ rule sniffles_vcf:
         sniffles -m {input} -v  {output}
         """
 
-rule lumpy_vcf: 
-    input: 
-      "{sample}.sorted.bam",
-      "{sample}.discordants.sorted.bam",
-      "{sample}.splitters.sorted.bam" 
-    output: 
-       "{sample}.lumpy.vcf", 
-    conda: "env/env-lumpy.yaml"
-    shell: 
-        """
-         echo lumpyexpress  -B {input[0]} -S {input[2]} -D {input[1]} -o {output} >> lumpy.sh 
-        """ 
 rule gene_fuse: 
     input:
        val1 = "galore/{sample}.r_1_val_1.fq.gz",
@@ -178,31 +164,6 @@ rule gene_fuse:
         wget https://raw.githubusercontent.com/OpenGene/GeneFuse/master/genes/{params.druggable}
         genefuse -r {input.genome}  -f {params.druggable} -1 {input.val1} -2 {input.val2} -h {output.html} > {output.result}
         """
-
-rule discordants :
-      input:
-           "{sample}.sorted.bam"
-      output: 
-          "{sample}.discordants.unsorted.bam", 
-          "{sample}.discordants.sorted.bam"
-      shell: 
-         """
-          samtools view -b -F 1294 {input} > {output[0]} 
-          samtools sort {output[0]} -o {output[1]} 
-         """ 
-
-rule splitters: 
-      input:
-           "{sample}.sorted.bam"
-      output:
-           "{sample}.splitters.unsorted.bam",
-           "{sample}.splitters.sorted.bam"
-      shell: 
-          """ 
-          samtools view -h  {input} | samblaster --ignoreUnmated -e --maxReadLength 100000 -s temp.split.sam] | samtools view -Sb - > {output[0]}
-          samtools sort {output[0]} -o {output[1]} 
-          """ 
-
 
 rule annotate: 
     input: 

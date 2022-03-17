@@ -6,7 +6,7 @@ Snakemake Workflow for Structure Variations Calling and Gene Fusion
 =======================================================================================================================
 
 
-This is a Snakemake workflow for structure variations calling using delly, tiddit, and lumpy calling for structure variations SV (More structure variations tools will be included). 
+This is a Snakemake workflow for structure variations calling using delly, tiddit, and sniffles calling for structure variations SV (More structure variations tools will be included). 
 
 We also use genefuse for calling gene fusions. 
 
