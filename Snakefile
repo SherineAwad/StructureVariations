@@ -6,10 +6,10 @@ rule all:
        expand("{sample}.discordants.sorted.bam", sample = config['SAMPLES']),
        expand("{sample}.splitters.sorted.bam", sample = config['SAMPLES']),
        expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),
-       #expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
-       #expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL']),
-       #expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL'])
-
+       expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
+       expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL']),
+       expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL'])
+       
 if config['PAIRED']:
     rule trim:
        input:
@@ -65,7 +65,18 @@ rule sam_bam:
     shell: 
          """ 
          samtools view -S -b {input} > {output}
-         """ 
+         samtools index {input}
+         """
+rule sort_index: 
+     input: 
+       "{sample}.bam" 
+     output: 
+       "{sample}.sorted.bam"
+     shell: 
+         """
+         samtools sort {input} -o {output}
+         samtools index {output}
+         """  
 rule AddRG: 
     input: 
        '{sample}.sam'
@@ -129,18 +140,27 @@ rule tiddit_vcf:
     shell: 
       "tiddit --sv --bam {input} -o {params}"
 
+rule sniffles_vcf:
+    input:
+       "{SAMPLE}.sorted.bam"
+    output:
+       "{SAMPLE}.sniffles.vcf"
+    shell:
+        """
+        sniffles -m {input} -v  {output}
+        """
 
 rule lumpy_vcf: 
     input: 
-      "{sample}.bam",
+      "{sample}.sorted.bam",
       "{sample}.discordants.sorted.bam",
       "{sample}.splitters.sorted.bam" 
     output: 
-       "{sample}.lumpy.vcf" 
+       "{sample}.lumpy.vcf", 
     conda: "env/env-lumpy.yaml"
     shell: 
         """
-        lumpyexpress  -B {input[0]} -S {input[2]} -D {input[1]} -o {output} 
+         echo lumpyexpress  -B {input[0]} -S {input[2]} -D {input[1]} -o {output} >> lumpy.sh 
         """ 
 rule gene_fuse: 
     input:
@@ -161,7 +181,7 @@ rule gene_fuse:
 
 rule discordants :
       input:
-           "{sample}.bam"
+           "{sample}.sorted.bam"
       output: 
           "{sample}.discordants.unsorted.bam", 
           "{sample}.discordants.sorted.bam"
@@ -173,7 +193,7 @@ rule discordants :
 
 rule splitters: 
       input:
-           "{sample}.bam"
+           "{sample}.sorted.bam"
       output:
            "{sample}.splitters.unsorted.bam",
            "{sample}.splitters.sorted.bam"

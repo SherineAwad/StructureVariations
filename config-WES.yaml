@@ -10,8 +10,7 @@ SAMPLES: ['SLX-18968.UDP0231.HT3G5DMXX.s_2',
 #           'SLX-18968.UDP0285.HT3G5DMXX.s_2',
 #           'SLX-18968.UDP0287.HT3G5DMXX.s_2']
 
-#TOOL: {'delly', 'tiddit','lumpy'}
-TOOL: {'delly', 'tiddit'}
+TOOL: {'delly', 'tiddit', 'sniffles'}
 BUILD: "GRCh38"
 COHORT: "WES" 
 PAIRED: TRUE
