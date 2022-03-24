@@ -1,13 +1,23 @@
-#ruleorder: trim > tosam > AddRG > dedup >  delly_vcf > tiddit_vcf > sniffles_vcf > plot > SURVIVOR_LIST
+configfile:"config.yaml" 
+
+for f in config['TOOL']: 
+    file = config['COHORT']+"."+f +".list"
+    fp = open(file, "a+") 
+    for i in config['SAMPLES']: 
+        output = i+"."+ f +".vcf" 
+        print(output, file =fp)
+    fp.close()
 
 rule all: 
     input:
        expand("{sample}.sam", sample = config['SAMPLES']),
        expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),
+       expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL']),
+       expand("{COHORT}.{SV}.list", COHORT=config['COHORT'], SV = config['TOOL']),
        expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
-       expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL']),
-       expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL'])
-       
+       expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL'])
+ 
+
 if config['PAIRED']:
     rule trim:
        input:
@@ -133,10 +143,12 @@ rule tiddit_vcf:
     params: 
         "{SAMPLE}.tiddit"
     output: 
-         "{SAMPLE}.tiddit.vcf"
+         "{SAMPLE}.tiddit.vcf",
     conda: 'env/env-tiddit.yaml'
     shell: 
-      "tiddit --sv --bam {input} -o {params}"
+      """ 
+         tiddit --sv --bam {input} -o {params}
+      """
 
 rule sniffles_vcf:
     input:
