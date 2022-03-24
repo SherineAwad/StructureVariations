@@ -11,7 +11,6 @@ This is a Snakemake workflow for structure variations calling using delly, tiddi
 We also use genefuse for calling gene fusions. 
 
 The pipeline uses trimgalore and cutadapt to trim adapters. Align the reads using bwa mem. Based on the SV tool used, we either sort and index or add readgroups and mark duplicates.  
-
 We use ANNOTSV for annotating the structure variants and SURVIVOR for filtering and merging as needed. 
 
 The pipeline shows some plots to help visualize the SV as follows: 
@@ -36,9 +35,24 @@ and you can see an html page sumamry of the SV in your sample in `index.html` fo
 
    [index.html](samplot-out/index.html)
  
-#### Run the pipeline 
+#### Edit the configfile 
 
-To run the pipeline, you need to change appropriately the config file, and use:
+You will need to edit your config file as described below: 
+| Config Variable      | Description                      |
+| ---------------------| ---------------------------------|
+| SAMPLES              | list your samples without suffix |
+| TOOLS                | Leave as it is if you want to run delly, tiddit, sniffles, or remove unwanted tool   |
+| BUILD                | For AnnotSV, select genome BUILD required |
+| GENOME               | Path to your genome file |
+| COHORT               | Name of your Cohort | 
+| PAIRED               | True if your samples are paired, false otherwise | 
+| RG                   | The READ Group  |
+| druggable            | druggable file requried by genefuse | 
+| EXCL                 | Excl file required by delly |
+
+#### Run the pipeline
+
+To run the pipeline use:
 
     snakemake -jn where n is the number of cores. 
 
@@ -86,15 +100,6 @@ You can try the following to keep going if any issues happen, like no variants i
     snakemake -j1 --keep-going 
 
 
-## TODO 
-
-1. Add more parameters in the config file to replace many default parameters 
-
-2. Add more tools to call structure variations that suite WES and WGS 
-
-4. Add  more gene fusion tools 
-
-
 ## References
 
 1. Brouard, Jean-Simon, Flavio Schenkel, Andrew Marete, and Nathalie Bissonnette. "The GATK joint genotyping workflow is appropriate for calling variants in RNA-seq experiments." Journal of animal science and biotechnology 10, no. 1 (2019): 1-6.
@@ -115,5 +120,4 @@ You can try the following to keep going if any issues happen, like no variants i
 
 9. Jeffares, D. C., Jolly, C., Hoti, M., Speed, D., Shaw, L., Rallis, C., ... & Sedlazeck, F. J. (2017). Transient structural variations have strong effects on quantitative traits and reproductive isolation in fission yeast. Nature communications, 8(1), 1-11.
 
-10. Layer, R. M., Chiang, C., Quinlan, A. R., & Hall, I. M. (2014). LUMPY: a probabilistic framework for structural variant discovery. Genome biology, 15(6), 1-19.
 
