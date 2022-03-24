@@ -2,7 +2,7 @@ configfile:"config.yaml"
 
 for f in config['TOOL']: 
     file = config['COHORT']+"."+f +".list"
-    fp = open(file, "a+") 
+    fp = open(file, "w+") 
     for i in config['SAMPLES']: 
         output = i+"."+ f +".vcf" 
         print(output, file =fp)
@@ -11,12 +11,11 @@ for f in config['TOOL']:
 rule all: 
     input:
        expand("{sample}.sam", sample = config['SAMPLES']),
+       expand("{sample}_report.html",  sample =config['SAMPLES']), 
        expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),
-       expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL']),
-       expand("{COHORT}.{SV}.list", COHORT=config['COHORT'], SV = config['TOOL']),
        expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
-       expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL'])
- 
+       expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL']),
+       expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL']) 
 
 if config['PAIRED']:
     rule trim:
@@ -110,9 +109,9 @@ rule dedup:
 
 rule get_excl: 
       params: 
-         EXCL = config['EXCL_HG38']
+         EXCL = config['EXCL']
       output: 
-         config['EXCL_HG38']
+         config['EXCL']
       shell: 
          "wget https://raw.githubusercontent.com/dellytools/delly/master/excludeTemplates/{params}"
  
@@ -120,7 +119,7 @@ rule delly_bcf:
      input:
         "{SAMPLE}.dedupped.bam",
         genome = config['GENOME'],
-        EXCL = config['EXCL_HG38']
+        EXCL = config['EXCL']
      output:
         "{SAMPLE}.delly.bcf"
      conda: 'env/env-delly.yaml'
@@ -188,13 +187,15 @@ rule annotate:
         "$ANNOTSV/bin/AnnotSV -SVinputFile ./{input} -outputFile ./{output} -genomeBuild {params.build}"         
 
 rule SURVIVOR_LIST:
-   input:  
+   input:
+      expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'])
+   params:  
       "{COHORT}.{SV}.list",
    output: 
-      "{COHORT}.{SV}.vcf"
+      "{COHORT}.{SV}.vcf"	
    shell: 
       """
-        SURVIVOR merge {input[0]}  1000 10 1 1 0 30 {output[0]}
+        SURVIVOR merge {params}  1000 10 1 1 0 30 {output[0]}
       """ 
 
 

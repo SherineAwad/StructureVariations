@@ -6,12 +6,6 @@ BUILD: "GRCh38"
 COHORT: "WES" 
 PAIRED: TRUE
 GENOME: "../annotations/gatkresources/Homo_sapiens_assembly38.fasta"
-DBSNP: "../annotations/gatkresources/Homo_sapiens_assembly38.dbsnp138.vcf"
-INDELS: "../annotations/gatkresources/Homo_sapiens_assembly38.known_indels.vcf"
-GOLD_STANDARD: "../annotations/gatkresources/Mills_and_1000G_gold_standard.indels.hg38.vcf"
-EXCL_HG38: "human.hg38.excl.tsv"
-
+EXCL: "human.hg38.excl.tsv"
 RG: "A00489_467.HT3G5DMXX.2"
-ALL_VCF: "all_samples.vcf"
 druggable: "druggable.hg38.csv"
-AnnotationDB: "gnomad.exomes.r2.1.1.sites.liftover_grch38.vcf.bgz" 
