@@ -1,5 +1,4 @@
-SAMPLES: ['SLX-18968.UDP0231.HT3G5DMXX.s_2',
-           'SLX-18968.UDP0239.HT3G5DMXX.s_2'] 
+SAMPLES: "samples.tsv"
 
 TOOL: {'delly', 'tiddit', 'sniffles'}
 BUILD: "GRCh38"

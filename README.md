@@ -13,34 +13,13 @@ We also use genefuse for calling gene fusions.
 The pipeline uses trimgalore and cutadapt to trim adapters. Align the reads using bwa mem. Based on the SV tool used, we either sort and index or add readgroups and mark duplicates.  
 We use ANNOTSV for annotating the structure variants and SURVIVOR for filtering and merging as needed. 
 
-The pipeline shows some plots to help visualize the SV as follows: 
-
-#### Deletion Example 
-
-![DEL_chr1_156556862_156559163.png](samplot-out/DEL_chr1_156556862_156559163.png)
-
-##### Duplication Example 
-
-![DUP_chr7_56372767_56375125.png](samplot-out/DUP_chr7_56372767_56375125.png)
-
-##### Inversion Example 
-
-INV_chr16_34590021_46397471.png
-
-![INV_chr16_34590021_46397471.png](samplot-out/INV_chr16_34590021_46397471.png)
-
-
-and you can see an html page sumamry of the SV in your sample in `index.html` for example, for delly output:: 
-
-
-   [index.html](samplot-out/index.html)
- 
 #### Edit the configfile 
 
 You will need to edit your config file as described below: 
+
 | Config Variable      | Description                      |
 | ---------------------| ---------------------------------|
-| SAMPLES              | list your samples without suffix |
+| SAMPLES              | name of file containing your samples names, default: samples.tsv |
 | TOOLS                | Leave as it is if you want to run delly, tiddit, sniffles, or remove unwanted tool   |
 | BUILD                | For AnnotSV, select genome BUILD required |
 | GENOME               | Path to your genome file |
@@ -49,6 +28,33 @@ You will need to edit your config file as described below:
 | RG                   | The READ Group  |
 | druggable            | druggable file requried by genefuse | 
 | EXCL                 | Excl file required by delly |
+
+The pipeline takes samples with a suffix 'r_1.fq.gz' and 'r_2.fq.gz' if the samples are paired. Or it takes samples with suffix 'fq.gz' if the samples is single-end reads. 
+Regardless your samples are paired or single-ended, SAMPLES should be listed in samples.tsv without the suffix. 
+
+#### Output 
+
+The pipeline shows some plots to help visualize the SV as follows:
+
+#### Deletion Example 
+ 
+![DEL_chr2_32916570_201284738.png](samplot-out/DEL_chr2_32916570_201284738.png)
+
+##### Duplication Example 
+
+![DUP_chr11_99819753_99820641.png](samplot-out/DUP_chr11_99819753_99820641.png)
+
+##### Inversion Example 
+
+
+![INV_chr2_79026861_79158701.png](samplot-out/INV_chr2_79026861_79158701.png)
+
+
+and you can see an html page sumamry of the SV in your sample in `sample.html` for example, for tiddit output::
+
+   [index.html](samplot-out/SLX-18968.UDP0231.HT3G5DMXX.s_2.tiddit.html)
+
+For each sample you will get a a vcf, annotated tsv file and an html page showing the SVs in this sample. In addition to a sub-folder samplot-out that contains all the plots of the SVs in this sample and yoursample.html page listing all the SVs.
 
 #### Run the pipeline
 

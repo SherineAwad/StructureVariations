@@ -1,21 +1,27 @@
 configfile:"config.yaml" 
 
+with open(config['SAMPLES']) as fp:
+    SAMPLES= fp.read().splitlines()
+print(SAMPLES)
+
+
 for f in config['TOOL']: 
     file = config['COHORT']+"."+f +".list"
     fp = open(file, "w+") 
-    for i in config['SAMPLES']: 
+    for i in SAMPLES: 
         output = i+"."+ f +".vcf" 
         print(output, file =fp)
     fp.close()
 
 rule all: 
     input:
-       expand("{sample}.sam", sample = config['SAMPLES']),
-       expand("{sample}_report.html",  sample =config['SAMPLES']), 
-       expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'] ),
-       expand("{sample}.{sv}.annotated.vcf.tsv", sample = config['SAMPLES'] , sv = config['TOOL']),
-       expand("{sample}.{sv}_output/{sample}.{sv}.html", sample = config['SAMPLES'] , sv = config['TOOL']),
-       expand("{COHORT}.{SV}.vcf", COHORT=config['COHORT'], SV = config['TOOL']) 
+       expand("{sample}.sam", sample = SAMPLES),
+       expand("{sample}.sorted.bam", sample = SAMPLES),
+       expand("{sample}_report.html",  sample =SAMPLES), 
+       expand("{sample}.{sv}.vcf", sample = SAMPLES, sv = config['TOOL'] ),
+       expand("{sample}.{sv}.annotated.vcf.tsv", sample = SAMPLES , sv = config['TOOL']),
+       expand("samplot-out/{sample}.{sv}.html", sample = SAMPLES , sv = config['TOOL']),
+       expand("{COHORT}.{SV}.vcf", COHORT = config['COHORT'], SV= config['TOOL'])
 
 if config['PAIRED']:
     rule trim:
@@ -57,12 +63,13 @@ else:
            """
      rule tosam:
         input:
-           "galore/{sample}_trimmed.fq.gz"
+           "galore/{sample}_trimmed.fq.gz",
+           genome = config['GENOME']
         output:
             '{sample}.sam'
         conda: 'env/env-align.yaml'
         shell:
-           "bwa mem {input.genome} {input} > {output}" 
+           "bwa mem {input.genome} {input[0]} > {output}" 
 
 rule sam_bam: 
     input: 
@@ -72,7 +79,6 @@ rule sam_bam:
     shell: 
          """ 
          samtools view -S -b {input} > {output}
-         samtools index {input}
          """
 rule sort_index: 
      input: 
@@ -156,7 +162,7 @@ rule sniffles_vcf:
        "{SAMPLE}.sniffles.vcf"
     shell:
         """
-        sniffles -m {input} -v  {output}
+        sniffles -i {input} --vcf {output}
         """
 
 rule gene_fuse: 
@@ -188,28 +194,25 @@ rule annotate:
 
 rule SURVIVOR_LIST:
    input:
-      expand("{sample}.{sv}.vcf", sample = config['SAMPLES'], sv = config['TOOL'])
+      expand("{sample}.{sv}.vcf" ,sample = SAMPLES, sv =config['TOOL'])
    params:  
-      "{COHORT}.{SV}.list",
+      "{COHORT}.{sv}.list" 
    output: 
-      "{COHORT}.{SV}.vcf"	
+      "{COHORT}.{sv}.vcf"
    shell: 
       """
-        SURVIVOR merge {params}  1000 10 1 1 0 30 {output[0]}
+        SURVIVOR merge {params[0]}  1000 10 1 1 0 30 {output[0]}
       """ 
 
 
 rule plot: 
     input: 
-       "{sample}.{sv}.vcf", 
+       "{sample}.{sv}.vcf",
        "{sample}.dedupped.bam" 
-    params: 
-       "{sample}.{sv}_output"
     output: 
-        "{sample}.{sv}_output/{sample}.{sv}.html"
+        "samplot-out/{sample}.{sv}.html"
     shell: 
        """
-       samplot vcf --vcf {input[0]} -O png -b {input[1]} 
-       mv samplot-out {params}  
-       mv {params}/index.html {output}
+       samplot vcf --vcf {input[0]} -O png -b {input[1]} && mv samplot-out/index.html {output} 
        """ 
+
