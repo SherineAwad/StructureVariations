@@ -1,6 +1,7 @@
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.0.2-brightgreen.svg)](https://snakemake.github.io)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![DOI](https://zenodo.org/badge/352605728.svg)](https://zenodo.org/badge/latestdoi/352605728)
 
 Snakemake Workflow for Structure Variations Calling and Gene Fusion 
 =======================================================================================================================
@@ -105,6 +106,12 @@ and you can see the command printed on a dry run using:
 You can try the following to keep going if any issues happen, like no variants is found by one tool: 
     
     snakemake -j1 --keep-going 
+
+#### Cite Us 
+
+If you use the pipeline, please cite us as follows: 
+
+      Sherine Awad. (2022). SherineAwad/StructureVariations: (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.6390009
 
 
 ## References
