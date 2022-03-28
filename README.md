@@ -11,7 +11,7 @@ This is a Snakemake workflow for structure variations calling using delly, tiddi
 We also use genefuse for calling gene fusions. 
 
 The pipeline uses trimgalore and cutadapt to trim adapters. Align the reads using bwa mem. Based on the SV tool used, we either sort and index or add readgroups and mark duplicates.  
-The pipeline annotates, filters and merges samples. As well as visualize the structure variants found into nice plots. 
+The pipeline annotates, filters, and merges samples. As well as visualize the structure variants into nice plots. 
 
 
 #### Edit the configfile 
@@ -32,7 +32,7 @@ You will need to edit your config file as described below:
 | MIN_BP               | Minumum Base Pairs of variant to plot. Default is 20, going lower than 20 will cause plotting issues | 
 
 
-The pipeline takes samples with a suffix 'r_1.fq.gz' and 'r_2.fq.gz' if the samples are paired. Or it takes samples with suffix 'fq.gz' if the samples is single-end reads. 
+The pipeline takes samples with a suffix 'r_1.fq.gz' and 'r_2.fq.gz' if the samples are paired. Or it takes samples with suffix 'fq.gz' if the samples are single-end reads. 
 Regardless your samples are paired or single-ended, SAMPLES should be listed in samples.tsv without the suffix. 
 
 #### Output 
@@ -53,11 +53,7 @@ The pipeline shows some plots to help visualize the SV as follows:
 ![INV_chr2_79026861_79158701.png](samplot-out/INV_chr2_79026861_79158701.png)
 
 
-and you can see an html page sumamry of the SV in your sample in `sample.html` for example, for tiddit output::
-
-   [index.html](samplot-out/SLX-18968.UDP0231.HT3G5DMXX.s_2.tiddit.html)
-
-For each sample you will get a a vcf, annotated tsv file and an html page showing the SVs in this sample. In addition to a sub-folder samplot-out in your working directory which contains all the plots of the SVs in this sample and yoursample.html page listing all the SVs.
+For each sample you will get a a vcf, annotated tsv file in addition to a sub-folder samplot-out in your working directory which contains all the plots of the SVs in your samples and yoursample.html page listing all the SVs per sample. 
 
 The results of gene fusion will be in an html page yoursample_report.html in your working directory.  
 
@@ -91,8 +87,6 @@ There is a conda env yaml file for all tools. However, ANNOTSV has to be install
 You can run a specific rule using the rule output, for example we can call the delly_vcf rule on a specific sample: 
  
     snakemake -j1 sample.delly.vcf --use-conda  
-
-where sample.r_1.fq.gz and sample.s_2.r_2.fq.gz should exist in the directory. 
 
 
 #### Dry run 
