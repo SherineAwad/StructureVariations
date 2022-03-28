@@ -3,4 +3,5 @@ channels:
     - bioconda
     - defaults
 dependencies:
-    - lumpy-sv=0.3.1
+    - samtools=1.15
+    - bcftools=1.15 

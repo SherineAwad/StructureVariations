@@ -67,7 +67,7 @@ else:
            genome = config['GENOME']
         output:
             '{sample}.sam'
-        conda: 'env/env-align.yaml'
+        conda: 'env/env/env-align.yaml'
         shell:
            "bwa mem {input.genome} {input[0]} > {output}" 
 
@@ -76,15 +76,18 @@ rule sam_bam:
         "{sample}.sam"
     output: 
         "{sample}.bam"
+    conda: 'env/env-tools.yaml'
     shell: 
          """ 
          samtools view -S -b {input} > {output}
          """
+
 rule sort_index: 
      input: 
        "{sample}.bam" 
      output: 
        "{sample}.sorted.bam"
+     conda: 'env/env-tools.yaml'
      shell: 
          """
          samtools sort {input} -o {output}
@@ -137,7 +140,7 @@ rule delly_vcf:
         "{SAMPLE}.delly.bcf"
      output:
         "{SAMPLE}.delly.vcf"
-     conda: 'env/env-delly.yaml'
+     conda: 'env/env-tools.yaml'
      shell:
          "bcftools view {input} > {output}"
 
@@ -160,6 +163,7 @@ rule sniffles_vcf:
        "{SAMPLE}.sorted.bam"
     output:
        "{SAMPLE}.sniffles.vcf"
+    conda: "env/env-sniffles.yaml"
     shell:
         """
         sniffles -i {input} --vcf {output}
@@ -199,20 +203,23 @@ rule SURVIVOR_LIST:
       "{COHORT}.{sv}.list" 
    output: 
       "{COHORT}.{sv}.vcf"
+   conda: 'env/env-survivor.yaml'
    shell: 
       """
         SURVIVOR merge {params[0]}  1000 10 1 1 0 30 {output[0]}
       """ 
 
-
 rule plot: 
     input: 
        "{sample}.{sv}.vcf",
        "{sample}.dedupped.bam" 
-    output: 
+    params: 
+        config['MIN_BP']
+    output:
         "samplot-out/{sample}.{sv}.html"
+    conda: 'env/env-plot.yaml'
     shell: 
        """
-       samplot vcf --vcf {input[0]} -O png -b {input[1]} && mv samplot-out/index.html {output} 
+       samplot vcf --vcf {input[0]} --min_bp {params} -O png -b {input[1]} && mv samplot-out/index.html {output}   
        """ 
 
