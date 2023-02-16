@@ -4,8 +4,8 @@ TOOL: {'delly', 'tiddit', 'sniffles'}
 BUILD: "GRCh38"
 COHORT: "WGS" 
 PAIRED: TRUE
-GENOME: "../annotations/gatkresources/Homo_sapiens_assembly38.fasta"
+GENOME: "../Homo_sapiens_assembly38.fasta"
 EXCL: "human.hg38.excl.tsv"
-RG: "A00489_467.HT3G5DMXX.2"
+PL: "Illumina"
 druggable: "druggable.hg38.csv"
 MIN_BP: 20 #Lower than 20 will cause plotting issues 

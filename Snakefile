@@ -93,17 +93,21 @@ rule sort_index:
          samtools sort {input} -o {output}
          samtools index {output}
          """  
-rule AddRG: 
-    input: 
-       '{sample}.sam'
-    output: 
-       '{sample}.RG.sam' 
-    params: 
-        RG = config['RG']
+rule AddRG:
+    input:
+       '{sample}.sam',
+       '{sample}_r1.fastq.gz'
+    output:
+       '{sample}.RG.sam'
+    log: "logs/{sample}.addRG.log"
+    benchmark: "logs/{sample}.AddRG.benchmark"
     conda: 'env/env-picard.yaml'
+    params:
+        PL = config['PL']
     shell:
-        "picard AddOrReplaceReadGroups I={input} O={output} SO=coordinate RGID=@{params} RGSM={wildcards.sample} RGPL=Illumina RGLB={wildcards.sample} RGPU={params}_{wildcards.sample} VALIDATION_STRINGENCY=SILENT" 
-
+        """
+         python src/RG.py -s {input[0]} -f {input[1]} -o {output} -p = {params.PL}
+        """
 
 rule dedup: 
      input: 
@@ -126,7 +130,7 @@ rule get_excl:
  
 rule delly_bcf:
      input:
-        "{SAMPLE}.dedupped.bam",
+        "{SAMPLE}.recalibrated.bam",
         genome = config['GENOME'],
         EXCL = config['EXCL']
      output:
@@ -147,7 +151,7 @@ rule delly_vcf:
 
 rule tiddit_vcf: 
     input: 
-        "{SAMPLE}.dedupped.bam"
+        "{SAMPLE}.recalibrated.bam"
     params: 
         "{SAMPLE}.tiddit"
     output: 
@@ -160,7 +164,7 @@ rule tiddit_vcf:
 
 rule sniffles_vcf:
     input:
-       "{SAMPLE}.sorted.bam"
+       "{SAMPLE}.recalibrated.bam"
     output:
        "{SAMPLE}.sniffles.vcf"
     conda: "env/env-sniffles.yaml"
@@ -212,7 +216,7 @@ rule SURVIVOR_LIST:
 rule plot: 
     input: 
        "{sample}.{sv}.vcf",
-       "{sample}.dedupped.bam" 
+       "{sample}.recalibrated.bam" 
     params: 
         config['MIN_BP']
     output:
